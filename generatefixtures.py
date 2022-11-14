@@ -49,9 +49,11 @@ def main():
                 csv.writer(
                     fh, doublequote=False, escapechar="\\", quoting=csv.QUOTE_ALL
                 ),
-                random.randint(10, 200),
+                random.randint(4, 4),
                 categories,
             )
+    with open(path.join(DIR, "fixtures", "empty.csv"), "w", encoding="utf-8") as fh:
+        pass
 
 
 if __name__ == "__main__":
