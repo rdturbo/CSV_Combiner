@@ -1,7 +1,5 @@
-import contextlib
 import os
 import pandas as pd
-from io import StringIO
 
 import generatefixtures
 from csv_combiner import CSVCombiner
@@ -55,7 +53,7 @@ def test_no_input_file(capsys) -> None:
     no_file_msg = "Please provide file paths\n"
 
     combiner.combine_csv()
-    stdout, stderr = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
     assert no_file_msg == stdout
 
 
@@ -66,7 +64,7 @@ def test_wrong_input_file(capsys) -> None:
     wrong_file_msg = f"./fixtures/wrong_csv not found\n"
 
     combiner.combine_csv()
-    stdout, stderr = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
     assert wrong_file_msg == stdout
 
 
@@ -77,7 +75,7 @@ def test_empty_file(capsys) -> None:
     empty_file_msg = f"{empty_csv} is empty\n"
 
     combiner.combine_csv()
-    stdout, stderr = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
     assert empty_file_msg == stdout
 
 
@@ -86,7 +84,7 @@ def test_filename_present_in_header(capsys) -> None:
     command_line_args = [csv_combiner_py, accessories_csv, clothing_csv]
     combiner = CSVCombiner(command_line_args)
     combiner.combine_csv()
-    stdout, stderr = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     headers = split_output(stdout)[0]
     assert headers[-1] == "filename"
@@ -97,7 +95,7 @@ def test_filename_present_in_data(capsys) -> None:
     command_line_args = [csv_combiner_py, accessories_csv, clothing_csv]
     combiner = CSVCombiner(command_line_args)
     combiner.combine_csv()
-    stdout, stderr = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     data_row_1 = split_output(stdout)[1]
     assert data_row_1[-1] == "accessories.csv"
@@ -112,7 +110,6 @@ def test_result_includes_all_rows(capsys) -> None:
         household_cleaners_csv,
     ]
     combiner = CSVCombiner(command_line_args)
-    all_rows = StringIO()
 
     acc = pd.read_csv(accessories_csv)
     clo = pd.read_csv(clothing_csv)
@@ -122,7 +119,7 @@ def test_result_includes_all_rows(capsys) -> None:
     total_length = len(acc) + len(clo) + len(hcl) + 1
 
     combiner.combine_csv()
-    stdout, stderr = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     final_data = split_output(stdout)
     assert len(final_data) == total_length
