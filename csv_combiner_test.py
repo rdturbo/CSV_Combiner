@@ -29,16 +29,27 @@ def setup_module(module):
 
 
 def teardown_module(module):
+    # remove empty file
     os.remove(empty_csv)
 
 
 def split_output(output: str) -> list[list[str]]:
+    """Splits captured output from stdout
+       into desired format
+
+    Args:
+        output (str): captured output from stdout
+
+    Returns:
+        list[list[str]]: output in csv format
+    """
     lines = output.split("\n")
     n = len(lines)
     return [line.split(",") for line in lines][: n - 1]  # extra space in stdout
 
 
 def test_no_input_file() -> None:
+    """Test for no input file path given in command line"""
     command_line_args = [csv_combiner_py]
     combiner = CSVCombiner(command_line_args)
     no_file_msg = "Please provide file paths\n"
@@ -51,6 +62,7 @@ def test_no_input_file() -> None:
 
 
 def test_wrong_input_file() -> None:
+    """Test for wrong input file path given in command line"""
     command_line_args = [csv_combiner_py, "./fixtures/wrong_csv"]
     combiner = CSVCombiner(command_line_args)
     wrong_file_msg = f"./fixtures/wrong_csv not found\n"
@@ -63,6 +75,7 @@ def test_wrong_input_file() -> None:
 
 
 def test_empty_file() -> None:
+    """Test for empty file"""
     command_line_args = [csv_combiner_py, empty_csv]
     combiner = CSVCombiner(command_line_args)
     empty_file_msg = f"{empty_csv} is empty\n"
@@ -75,6 +88,7 @@ def test_empty_file() -> None:
 
 
 def test_filename_present_in_header() -> None:
+    """Test for checking if filename header is present"""
     command_line_args = [csv_combiner_py, accessories_csv, clothing_csv]
     combiner = CSVCombiner(command_line_args)
     filename_header_output = StringIO()
@@ -87,6 +101,7 @@ def test_filename_present_in_header() -> None:
 
 
 def test_filename_present_in_data() -> None:
+    """Test for checking one of the filename columns has output in correct format"""
     command_line_args = [csv_combiner_py, accessories_csv, clothing_csv]
     combiner = CSVCombiner(command_line_args)
     filename_row_output = StringIO()
@@ -99,6 +114,7 @@ def test_filename_present_in_data() -> None:
 
 
 def test_result_includes_all_rows() -> None:
+    """Test for checking length of final result is inclusive of all input files"""
     command_line_args = [
         csv_combiner_py,
         accessories_csv,
