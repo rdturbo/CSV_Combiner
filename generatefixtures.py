@@ -49,7 +49,7 @@ def main():
                 csv.writer(
                     fh, doublequote=False, escapechar="\\", quoting=csv.QUOTE_ALL
                 ),
-                random.randint(100, 1000),
+                random.randint(7, 7),
                 categories,
             )
 
