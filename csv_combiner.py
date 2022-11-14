@@ -69,7 +69,7 @@ class CSVCombiner:
         return True
 
     def combine_csv(self) -> None:
-        """Main combine method"""
+        """Main combine method to combine csv files with additional filename column"""
         if not self.validate_files():
             return
 

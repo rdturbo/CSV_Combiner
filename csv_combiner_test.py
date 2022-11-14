@@ -48,72 +48,62 @@ def split_output(output: str) -> list[list[str]]:
     return [line.split(",") for line in lines][: n - 1]  # extra space in stdout
 
 
-def test_no_input_file() -> None:
+def test_no_input_file(capsys) -> None:
     """Test for no input file path given in command line"""
     command_line_args = [csv_combiner_py]
     combiner = CSVCombiner(command_line_args)
     no_file_msg = "Please provide file paths\n"
-    no_file_output = StringIO()
 
-    with contextlib.redirect_stdout(no_file_output):
-        combiner.combine_csv()
-
-    assert no_file_msg == no_file_output.getvalue()
+    combiner.combine_csv()
+    stdout, stderr = capsys.readouterr()
+    assert no_file_msg == stdout
 
 
-def test_wrong_input_file() -> None:
+def test_wrong_input_file(capsys) -> None:
     """Test for wrong input file path given in command line"""
     command_line_args = [csv_combiner_py, "./fixtures/wrong_csv"]
     combiner = CSVCombiner(command_line_args)
     wrong_file_msg = f"./fixtures/wrong_csv not found\n"
-    wrong_file_output = StringIO()
 
-    with contextlib.redirect_stdout(wrong_file_output):
-        combiner.combine_csv()
-
-    assert wrong_file_msg == wrong_file_output.getvalue()
+    combiner.combine_csv()
+    stdout, stderr = capsys.readouterr()
+    assert wrong_file_msg == stdout
 
 
-def test_empty_file() -> None:
+def test_empty_file(capsys) -> None:
     """Test for empty file"""
     command_line_args = [csv_combiner_py, empty_csv]
     combiner = CSVCombiner(command_line_args)
     empty_file_msg = f"{empty_csv} is empty\n"
-    empty_file_output = StringIO()
 
-    with contextlib.redirect_stdout(empty_file_output):
-        combiner.combine_csv()
-
-    assert empty_file_msg == empty_file_output.getvalue()
+    combiner.combine_csv()
+    stdout, stderr = capsys.readouterr()
+    assert empty_file_msg == stdout
 
 
-def test_filename_present_in_header() -> None:
+def test_filename_present_in_header(capsys) -> None:
     """Test for checking if filename header is present"""
     command_line_args = [csv_combiner_py, accessories_csv, clothing_csv]
     combiner = CSVCombiner(command_line_args)
-    filename_header_output = StringIO()
+    combiner.combine_csv()
+    stdout, stderr = capsys.readouterr()
 
-    with contextlib.redirect_stdout(filename_header_output):
-        combiner.combine_csv()
-
-    headers = split_output(filename_header_output.getvalue())[0]
+    headers = split_output(stdout)[0]
     assert headers[-1] == "filename"
 
 
-def test_filename_present_in_data() -> None:
+def test_filename_present_in_data(capsys) -> None:
     """Test for checking one of the filename columns has output in correct format"""
     command_line_args = [csv_combiner_py, accessories_csv, clothing_csv]
     combiner = CSVCombiner(command_line_args)
-    filename_row_output = StringIO()
+    combiner.combine_csv()
+    stdout, stderr = capsys.readouterr()
 
-    with contextlib.redirect_stdout(filename_row_output):
-        combiner.combine_csv()
-
-    data_row_1 = split_output(filename_row_output.getvalue())[1]
+    data_row_1 = split_output(stdout)[1]
     assert data_row_1[-1] == "accessories.csv"
 
 
-def test_result_includes_all_rows() -> None:
+def test_result_includes_all_rows(capsys) -> None:
     """Test for checking length of final result is inclusive of all input files"""
     command_line_args = [
         csv_combiner_py,
@@ -131,8 +121,8 @@ def test_result_includes_all_rows() -> None:
     # +1 for header row
     total_length = len(acc) + len(clo) + len(hcl) + 1
 
-    with contextlib.redirect_stdout(all_rows):
-        combiner.combine_csv()
+    combiner.combine_csv()
+    stdout, stderr = capsys.readouterr()
 
-    final_data = split_output(all_rows.getvalue())
+    final_data = split_output(stdout)
     assert len(final_data) == total_length
